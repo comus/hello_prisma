@@ -1,0 +1,1113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String    @id @db.Uuid
+  googleProviderId String?   @map("google_provider_id") @db.VarChar(255)
+  username         String?   @db.VarChar(255)
+  name             String?   @db.VarChar(255)
+  email            String?   @db.VarChar(255)
+  profile_photo    String?
+  is_admin         Boolean?  @default(false)
+  groups           String[]  @db.VarChar(255)
+  created_at       DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at      DateTime? @db.Timestamptz(6)
+  deleted_at       DateTime? @db.Timestamptz(6)
+  seq_id           Int       @default(autoincrement())
+  hello            Int?
+
+  @@map("users")
+}
+
+model annual_transcript_settings {
+  id                     String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id                 Int       @id @default(autoincrement())
+  created_at             DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at            DateTime? @db.Timestamptz(6)
+  deleted_at             DateTime? @db.Timestamptz(6)
+  school_id              String?   @db.VarChar(255)
+  school_dashboard_id    String?   @db.VarChar(255)
+  terms                  Int?
+  cls_ids                String[]
+  show_rank              Int?
+  not_ranked_student_ids String[]
+  inclusive_student_ids  String[]
+  options                Json?     @db.Json
+  name                   String?   @db.VarChar(255)
+}
+
+model assessment_reports {
+  id                     String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id                 Int       @id @default(autoincrement())
+  created_at             DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at            DateTime? @db.Timestamptz(6)
+  deleted_at             DateTime? @db.Timestamptz(6)
+  name                   String?   @db.VarChar(255)
+  assessment_template_id String?   @db.VarChar(255)
+  submission_start_date  DateTime? @db.Timestamptz(6)
+  submission_end_date    DateTime? @db.Timestamptz(6)
+  date_of_issue          DateTime? @db.Timestamptz(6)
+  is_english             Boolean?  @default(false)
+  cls_ids                String[]  @db.VarChar(255)
+  schooluser_ids         String[]  @db.VarChar(255)
+  options                Json?     @db.Json
+  school_id              String?   @db.VarChar(255)
+  school_dashboard_id    String?   @db.VarChar(255)
+  title                  String?   @db.VarChar(255)
+  subtitle               String?   @db.VarChar(255)
+  term                   Int?
+}
+
+model assessment_templates {
+  id                   String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id               Int       @id @default(autoincrement())
+  created_at           DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at          DateTime? @db.Timestamptz(6)
+  deleted_at           DateTime? @db.Timestamptz(6)
+  name                 String?   @db.VarChar(255)
+  revision             Int?
+  code                 String?   @db.VarChar(255)
+  school_id            String?   @db.VarChar(255)
+  sections             Json?     @db.Json
+  assessment_report_id String?   @db.VarChar(255)
+  is_source            Boolean?  @default(true)
+}
+
+model assessments {
+  id                   String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id               Int       @id @default(autoincrement())
+  created_at           DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at          DateTime? @db.Timestamptz(6)
+  deleted_at           DateTime? @db.Timestamptz(6)
+  schooluser_id        String?   @db.VarChar(255)
+  assessment_report_id String?   @db.VarChar(255)
+  data                 Json?     @db.Json
+  cls_id               String?   @db.VarChar(255)
+  school_id            String?   @db.VarChar(255)
+  school_dashboard_id  String?   @db.VarChar(255)
+}
+
+model attendance_rules {
+  id                    String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id                Int       @id @default(autoincrement())
+  created_at            DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at           DateTime? @db.Timestamptz(6)
+  deleted_at            DateTime? @db.Timestamptz(6)
+  school_id             String?   @db.VarChar(255)
+  days                  Int[]
+  remarks               String?
+  priority              Int?
+  start_date            DateTime? @db.Timestamptz(6)
+  end_date              DateTime? @db.Timestamptz(6)
+  cls_ids               String[]
+  schooluser_ids        String[]
+  is_exempt             Boolean?
+  is_all_academic_staff Boolean?  @default(false)
+}
+
+model blockly {
+  id              String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id          Int       @id @default(autoincrement())
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at     DateTime? @db.Timestamptz(6)
+  deleted_at      DateTime? @db.Timestamptz(6)
+  game_name       String?   @db.VarChar(255)
+  game_level      Int?
+  school_id       String?   @db.VarChar(255)
+  finish_at       DateTime? @db.Timestamptz(6)
+  schooluser_id   String?   @db.VarChar(255)
+  user_game_level Int?
+}
+
+model book_borrow_rule {
+  id              String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id          Int       @id @default(autoincrement())
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at     DateTime? @db.Timestamptz(6)
+  deleted_at      DateTime? @db.Timestamptz(6)
+  is_student      Boolean?  @default(false)
+  is_teacher      Boolean?  @default(false)
+  is_cls          Boolean?  @default(false)
+  borrow_quantity Int?
+  borrow_day      Int?
+  school_id       String?   @db.VarChar(255)
+}
+
+model book_borrowing_records {
+  id              String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id          Int       @id @default(autoincrement())
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at     DateTime? @db.Timestamptz(6)
+  deleted_at      DateTime? @db.Timestamptz(6)
+  appointment_at  DateTime? @db.Timestamptz(6)
+  schooluser_id   String?   @db.VarChar(255)
+  book_id         String?   @db.VarChar(255)
+  revert_at       DateTime? @db.Timestamptz(6)
+  revert_state    Boolean?  @default(false)
+  extension_state Boolean?  @default(false)
+  school_id       String?   @db.VarChar(255)
+}
+
+model book_info {
+  id               String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id           Int       @id @default(autoincrement())
+  created_at       DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at      DateTime? @db.Timestamptz(6)
+  deleted_at       DateTime? @db.Timestamptz(6)
+  isbn             String?   @db.VarChar(255)
+  name             String?   @db.VarChar(255)
+  author           String?   @db.VarChar(255)
+  publishing_house String?
+  publishing_date  DateTime? @db.Timestamptz(6)
+  page             Int?
+  language         String?   @db.VarChar(255)
+  translation      String?   @db.VarChar(255)
+  Introduction     String?
+  school_id        String?   @db.VarChar(255)
+  borrow_num       Int?
+  sort_id          String?   @db.VarChar(255)
+  call_number      String?   @db.VarChar(255)
+  title            String[]
+  series           String?   @db.VarChar(255)
+  book_photo       String?   @db.VarChar(255)
+  price            Float?    @db.Real
+}
+
+model book_recommend {
+  id              String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id          Int       @id @default(autoincrement())
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at     DateTime? @db.Timestamptz(6)
+  deleted_at      DateTime? @db.Timestamptz(6)
+  isbn            String?   @db.VarChar(255)
+  school_id       String?   @db.VarChar(255)
+  comment         String?
+  recommend_group String?   @db.VarChar(255)
+}
+
+model books {
+  id          String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id      Int       @id @default(autoincrement())
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at DateTime? @db.Timestamptz(6)
+  deleted_at  DateTime? @db.Timestamptz(6)
+  isbn        String?   @db.VarChar(255)
+  position    String?   @db.VarChar(255)
+  book_id     String?   @db.VarChar(255)
+  school_id   String?   @db.VarChar(255)
+  state       String?   @db.VarChar(255)
+}
+
+model books_sort {
+  id               String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id           Int       @id @default(autoincrement())
+  created_at       DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at      DateTime? @db.Timestamptz(6)
+  deleted_at       DateTime? @db.Timestamptz(6)
+  name             String?   @db.VarChar(255)
+  sort_num         String?   @db.VarChar(255)
+  default_position String?   @db.VarChar(255)
+  school_id        String?   @db.VarChar(255)
+}
+
+model classes {
+  id                  String    @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  name                String?   @db.VarChar(255)
+  school_dashboard_id String?   @db.VarChar(255)
+  school_id           String?   @db.VarChar(255)
+  english_name        String?   @db.VarChar(255)
+  slug                String?   @db.VarChar(255)
+  seq_id              Int       @id @default(autoincrement())
+  archived_at         DateTime? @db.Timestamptz(6)
+  label_ids           String[]
+}
+
+model coach_referrals {
+  id                   String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id               Int       @id @default(autoincrement())
+  created_at           DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at          DateTime? @db.Timestamptz(6)
+  deleted_at           DateTime? @db.Timestamptz(6)
+  creator_id           String?   @db.VarChar(255)
+  schooluser_id        String?   @db.VarChar(255)
+  health_reason        String?
+  developing_reason    String?
+  in_school_reason     String?
+  family_reason        String?
+  conduct_reason       String?
+  sentiment_reason     String?
+  remake               String?
+  prev_method          String?
+  school_dashboard_id  String?   @db.VarChar(255)
+  school_id            String?   @db.VarChar(255)
+  staff_id             String?   @db.VarChar(255)
+  dispatcher_id        String?   @db.VarChar(255)
+  is_closed            Boolean?  @default(false)
+  closed_at            DateTime? @db.Timestamptz(6)
+  handle_mode          Int?
+  is_read              Boolean?  @default(false)
+  cls_teacher_response String?
+  principal_response   String?
+  edit_logs            Json?     @db.Json
+}
+
+model comments {
+  id                  String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id              Int       @id @default(autoincrement())
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  comment             String?
+  schooluser_id       String?   @db.VarChar(255)
+  cls_id              String?   @db.VarChar(255)
+  creator_id          String?   @db.VarChar(255)
+  school_dashboard_id String?   @db.VarChar(255)
+  school_id           String?   @db.VarChar(255)
+}
+
+model courses {
+  id                  String    @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  name                String?   @db.VarChar(255)
+  school_dashboard_id String?   @db.VarChar(255)
+  school_id           String?   @db.VarChar(255)
+  cls_id              String?   @db.VarChar(255)
+  type                String?   @db.VarChar(255)
+  term                Int?      @default(0)
+  english_name        String?   @db.VarChar(255)
+  slug                String?   @db.VarChar(255)
+  seq_id              Int       @id @default(autoincrement())
+  credits             Float?    @default(0) @db.Real
+  archived_at         DateTime? @db.Timestamptz(6)
+  terms               Int[]
+  token               String?   @db.VarChar(255)
+}
+
+model etiologies {
+  id           String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at   DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at  DateTime? @db.Timestamptz(6)
+  deleted_at   DateTime? @db.Timestamptz(6)
+  seq_id       Int       @id @default(autoincrement())
+  name         String?   @db.VarChar(255)
+  english_name String?   @db.VarChar(255)
+  school_id    String?   @db.VarChar(255)
+}
+
+model follow_up {
+  id          String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at DateTime? @db.Timestamptz(6)
+  deleted_at  DateTime? @db.Timestamptz(6)
+  seq_id      Int       @id @default(autoincrement())
+  creator_id  String?   @db.VarChar(255)
+  referral_id String?   @db.VarChar(255)
+  content     String?
+  sub_title   String?
+}
+
+model grades {
+  id                  String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id              Int       @id @default(autoincrement())
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  school_id           String?   @db.VarChar(255)
+  schooluser_id       String?   @db.VarChar(255)
+  term                Int?
+  school_dashboard_id String?   @db.VarChar(255)
+  term_transcript_id  String?   @db.VarChar(255)
+  grades              Float[]
+  ratio_grades        Float[]
+  course_id           String?   @db.VarChar(255)
+  sub_course          String?   @db.VarChar(255)
+  ratio_sub_course    Float?    @default(1) @db.Real
+  cls_id              String?   @db.VarChar(255)
+  conduct             String?
+  rewards_punishments String?
+  lates               Int?
+  absences            Int?
+  absenteeisms        Int?
+  comment             String?
+  rating              String?   @db.VarChar(255)
+}
+
+model health_operations_log {
+  id                  String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  school_id           String?   @db.VarChar(255)
+  school_dashboard_id String?   @db.VarChar(255)
+  module_name         String?   @db.VarChar(255)
+  module_english_name String?   @db.VarChar(255)
+  seq_id              Int       @id @default(autoincrement())
+}
+
+model homework {
+  id          String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id      Int       @id @default(autoincrement())
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at DateTime? @db.Timestamptz(6)
+  deleted_at  DateTime? @db.Timestamptz(6)
+  school_id   String?   @db.VarChar(255)
+  cls_id      String?   @db.VarChar(255)
+  course_id   String?   @db.VarChar(255)
+  creator_id  String?   @db.VarChar(255)
+  title       String?   @db.VarChar(255)
+  content     String?
+  end_at      DateTime? @db.Timestamptz(6)
+  files       Json?     @db.Json
+}
+
+model homework_score {
+  id            String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id        Int       @id @default(autoincrement())
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at   DateTime? @db.Timestamptz(6)
+  deleted_at    DateTime? @db.Timestamptz(6)
+  fraction      Float?    @db.Real
+  schooluser_id String?   @db.VarChar(255)
+  homework_id   String?   @db.VarChar(255)
+  describe      String?   @db.VarChar(255)
+}
+
+model intelligences {
+  id           String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at   DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at  DateTime? @db.Timestamptz(6)
+  deleted_at   DateTime? @db.Timestamptz(6)
+  seq_id       Int       @id @default(autoincrement())
+  name         String?   @db.VarChar(255)
+  english_name String?   @db.VarChar(255)
+  school_id    String?   @db.VarChar(255)
+}
+
+model knex_migrations {
+  id             Int       @id @default(autoincrement())
+  name           String?   @db.VarChar(255)
+  batch          Int?
+  migration_time DateTime? @db.Timestamptz(6)
+}
+
+model knex_migrations_lock {
+  index     Int  @id @default(autoincrement())
+  is_locked Int?
+}
+
+model labels {
+  id          String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id      Int       @id @default(autoincrement())
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at DateTime? @db.Timestamptz(6)
+  deleted_at  DateTime? @db.Timestamptz(6)
+  name        String?   @db.VarChar(255)
+  school_id   String?   @db.VarChar(255)
+}
+
+model leaves {
+  id                  String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id              Int       @id @default(autoincrement())
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  start_at            DateTime? @db.Timestamptz(6)
+  end_at              DateTime? @db.Timestamptz(6)
+  schooluser_id       String?   @db.VarChar(255)
+  type                String?   @db.VarChar(255)
+  description         String?
+  state               Boolean?
+  remarks             String?
+  sessions            Int?
+  school_id           String?   @db.VarChar(255)
+  school_dashboard_id String?   @db.VarChar(255)
+}
+
+model leisure_applications {
+  id                      String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id                  Int       @id @default(autoincrement())
+  created_at              DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at             DateTime? @db.Timestamptz(6)
+  deleted_at              DateTime? @db.Timestamptz(6)
+  leisure_registration_id String?   @db.VarChar(255)
+  schooluser_id           String?   @db.VarChar(255)
+  is_accepted             Boolean?  @default(false)
+  priority                Int?
+  state                   String?   @db.VarChar(255)
+}
+
+model leisure_registrations {
+  id                  String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id              Int       @id @default(autoincrement())
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  school_dashboard_id String?   @db.VarChar(255)
+  school_id           String?   @db.VarChar(255)
+  course_id           String?   @db.VarChar(255)
+  name                String?   @db.VarChar(255)
+  limit               Int?
+  start_at            DateTime? @db.Timestamptz(6)
+  end_at              DateTime? @db.Timestamptz(6)
+  cls_ids             String[]
+  teacher_id          String?   @db.VarChar(255)
+  activity_start      String?   @db.VarChar(255)
+  activity_end        String?   @db.VarChar(255)
+  filter              String?   @db.VarChar(255)
+  content             String?
+  is_filted           Boolean?  @default(false)
+}
+
+model leisure_transcripts {
+  id                  String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id              Int       @id @default(autoincrement())
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  name                String?   @db.VarChar(255)
+  course_ids          String[]
+  start_at            DateTime? @db.Timestamptz(6)
+  end_at              DateTime? @db.Timestamptz(6)
+  term                Int?
+  school_id           String?   @db.VarChar(255)
+  school_dashboard_id String?   @db.VarChar(255)
+}
+
+model marksheets {
+  id                   String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id               Int       @id @default(autoincrement())
+  created_at           DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at          DateTime? @db.Timestamptz(6)
+  deleted_at           DateTime? @db.Timestamptz(6)
+  school_id            String?   @db.VarChar(255)
+  schooluser_id        String?   @db.VarChar(255)
+  term                 Int?
+  school_dashboard_id  String?   @db.VarChar(255)
+  term_transcript_id   String?   @db.VarChar(255)
+  grades               Json?     @db.Json
+  conduct              String?
+  rewards_punishments  String?
+  lates                Int?
+  absences             Int?
+  absenteeisms         Int?
+  total_score          Float?    @db.Real
+  avg_score            Float?    @db.Real
+  cls_rank             String?   @db.VarChar(255)
+  group_rank           String?   @db.VarChar(255)
+  comment              String?
+  student_data         Json?     @db.Json
+  annual_transcript_id String?   @db.VarChar(255)
+  awards               String?
+  conclusion           String?
+  usual                Float?    @db.Real
+  exam                 Float?    @db.Real
+}
+
+model medical_records {
+  id                      String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at              DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at             DateTime? @db.Timestamptz(6)
+  deleted_at              DateTime? @db.Timestamptz(6)
+  creator_id              String?   @db.VarChar(255)
+  schooluser_id           String?   @db.VarChar(255)
+  remark                  String?
+  school_id               String?   @db.VarChar(255)
+  school_dashboard_id     String?   @db.VarChar(255)
+  chief_complaint         String?   @db.VarChar(255)
+  symptoms                String[]
+  seq_id                  Int       @id @default(autoincrement())
+  admission_at            DateTime? @db.Timestamptz(6)
+  discharge_at            DateTime? @db.Timestamptz(6)
+  treatment               String?
+  symptom                 String?   @db.VarChar(255)
+  notified                Boolean?
+  edit_logs               Json?     @db.Json
+  application_type        String?   @db.VarChar(255)
+  application_remark      String?
+  application_created_at  DateTime? @db.Timestamptz(6)
+  application_modified_at DateTime? @db.Timestamptz(6)
+  leave_school_at         DateTime? @db.Timestamptz(6)
+}
+
+model mobile_token {
+  id          String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id      Int       @id @default(autoincrement())
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at DateTime? @db.Timestamptz(6)
+  deleted_at  DateTime? @db.Timestamptz(6)
+  token       String?   @db.VarChar(255)
+  user_id     String?   @db.VarChar(255)
+}
+
+model notifications {
+  id                     String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id                 Int       @id @default(autoincrement())
+  created_at             DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at            DateTime? @db.Timestamptz(6)
+  deleted_at             DateTime? @db.Timestamptz(6)
+  school_id              String?   @db.VarChar(255)
+  creator_id             String?   @db.VarChar(255)
+  schooluser_ids         String[]
+  date_of_issue          DateTime? @db.Timestamptz(6)
+  title                  String?   @db.VarChar(255)
+  content                String?
+  selections             String[]
+  submission_date_end    DateTime? @db.Timestamptz(6)
+  is_reply               Boolean?  @default(false)
+  is_school_notification Boolean?  @default(false)
+  cls_ids                String[]
+  is_issued              Boolean?  @default(false)
+  files                  String[]
+  is_all_teachers        Boolean?  @default(false)
+  is_all_students        Boolean?  @default(false)
+  is_to_students         Boolean?  @default(false)
+  is_to_guardians        Boolean?  @default(false)
+  school_dashboard_id    String?   @db.VarChar(255)
+  label_ids              String[]
+}
+
+model post_photos {
+  id                  String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  post_id             String?   @db.VarChar(255)
+  key                 String?   @db.VarChar(255)
+  url                 String?   @db.VarChar(255)
+  face_records        Json?     @db.Json
+  participant_ids     String[]  @db.VarChar(255)
+  school_id           String?   @db.VarChar(255)
+  delete_face_ids     String[]  @db.VarChar(255)
+  type                String?   @db.VarChar(255)
+  school_dashboard_id String?   @db.VarChar(255)
+}
+
+model posts {
+  id                  String    @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  creator_id          String?   @db.VarChar(255)
+  title               String?   @db.VarChar(255)
+  content             String?
+  course_id           String?   @db.VarChar(255)
+  cls_id              String?   @db.VarChar(255)
+  school_id           String?   @db.VarChar(255)
+  school_dashboard_id String?   @db.VarChar(255)
+  participant_ids     String[]  @db.VarChar(255)
+  seq_id              Int       @id @default(autoincrement())
+  cls_ids             String[]  @db.VarChar(255)
+  course_ids          String[]  @db.VarChar(255)
+  talent_id           String?   @db.VarChar(255)
+  is_school_post      Boolean?  @default(false)
+  content_blocks      String?
+  type                String?   @db.VarChar(255)
+  show_all_photos     Boolean?  @default(false)
+}
+
+model preventives_isolation {
+  id                  String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  start_at            DateTime? @db.Timestamptz(6)
+  end_at              DateTime? @db.Timestamptz(6)
+  creator_id          String?   @db.VarChar(255)
+  schooluser_id       String?   @db.VarChar(255)
+  reason              String?
+  school_id           String?   @db.VarChar(255)
+  school_dashboard_id String?   @db.VarChar(255)
+  seq_id              Int       @id @default(autoincrement())
+  edit_logs           Json?     @db.Json
+}
+
+model punch_records {
+  id                  String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id              Int       @id @default(autoincrement())
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  school_id           String?   @db.VarChar(255)
+  schooluser_id       String?   @db.VarChar(255)
+  card_no             String?   @db.VarChar(255)
+  punch_in_at         DateTime? @db.Timestamptz(6)
+  punch_out_at        DateTime? @db.Timestamptz(6)
+  absenteeisms        Int?
+  lates               Int?
+  section             Int?
+  official_leaves     Int?
+  absences            Int?
+  school_dashboard_id String?   @db.VarChar(255)
+  attendance_date     DateTime? @db.Date
+  edit_logs           Json?     @db.Json
+}
+
+model questionnaire {
+  id                         String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id                     Int       @id @default(autoincrement())
+  created_at                 DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at                DateTime? @db.Timestamptz(6)
+  deleted_at                 DateTime? @db.Timestamptz(6)
+  questionnaire_title        String?   @db.VarChar(255)
+  questionnaire_introduction String?   @db.VarChar(255)
+  start_at                   DateTime? @db.Timestamptz(6)
+  end_at                     DateTime? @db.Timestamptz(6)
+  questionnaire_group        String?   @db.VarChar(255)
+  questionnaire_cls_ids      String[]
+  school_id                  String?   @db.VarChar(255)
+}
+
+model questionnaire_options {
+  id               String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id           Int       @id @default(autoincrement())
+  created_at       DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at      DateTime? @db.Timestamptz(6)
+  deleted_at       DateTime? @db.Timestamptz(6)
+  options_title    String?   @db.VarChar(255)
+  options_num      Int?
+  questionnaire_id String?   @db.VarChar(255)
+  options_type     String?   @db.VarChar(255)
+  required         Boolean?  @default(true)
+  photo_url        String?   @db.VarChar(255)
+  options_content  String[]
+  exclude_options  Int[]
+}
+
+model questionnaire_schooluser {
+  id               String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id           Int       @id @default(autoincrement())
+  created_at       DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at      DateTime? @db.Timestamptz(6)
+  deleted_at       DateTime? @db.Timestamptz(6)
+  schooluser_id    String?   @db.VarChar(255)
+  questionnaire_id String?   @db.VarChar(255)
+  options_content  String[]
+  school_id        String?   @db.VarChar(255)
+}
+
+model ranks {
+  id          String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id      Int       @id @default(autoincrement())
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at DateTime? @db.Timestamptz(6)
+  deleted_at  DateTime? @db.Timestamptz(6)
+  school_id   String?   @db.VarChar(255)
+  name        String?   @db.VarChar(255)
+  upper_limit Int?
+  lower_limit Int?
+}
+
+model roles {
+  id            String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id        Int       @id @default(autoincrement())
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at   DateTime? @db.Timestamptz(6)
+  deleted_at    DateTime? @db.Timestamptz(6)
+  schooluser_id String?   @db.VarChar(255)
+  role          String?   @db.VarChar(255)
+  module        String?   @db.VarChar(255)
+  school_id     String?   @db.VarChar(255)
+}
+
+model roll_calls {
+  id          String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id      Int       @id @default(autoincrement())
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at DateTime? @db.Timestamptz(6)
+  deleted_at  DateTime? @db.Timestamptz(6)
+  course_id   String?   @db.VarChar(255)
+  student_ids String[]
+  creator_id  String?   @db.VarChar(255)
+  school_id   String?   @db.VarChar(255)
+}
+
+model school_sport {
+  id                  String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id              Int       @id @default(autoincrement())
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  school_dashboard_id String?   @db.VarChar(255)
+  start_at            DateTime? @db.Timestamptz(6)
+  end_at              DateTime? @db.Timestamptz(6)
+  sign_up_start_at    DateTime? @db.Timestamptz(6)
+  sign_up_end_at      DateTime? @db.Timestamptz(6)
+  clsIds              String[]
+  school_id           String?   @db.VarChar(255)
+}
+
+model school_sport_default_item {
+  id          String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id      Int       @id @default(autoincrement())
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at DateTime? @db.Timestamptz(6)
+  deleted_at  DateTime? @db.Timestamptz(6)
+  name        String?   @db.VarChar(255)
+  type        String?   @db.VarChar(255)
+  school_id   String?   @db.VarChar(255)
+}
+
+model school_sport_group {
+  id             String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id         Int       @id @default(autoincrement())
+  created_at     DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at    DateTime? @db.Timestamptz(6)
+  deleted_at     DateTime? @db.Timestamptz(6)
+  name           String?   @db.VarChar(255)
+  gender         String?   @db.VarChar(255)
+  sport_id       String?   @db.VarChar(255)
+  birthday_start DateTime? @db.Timestamptz(6)
+  birthday_end   DateTime? @db.Timestamptz(6)
+  limit          Int?
+  is_relay       Boolean?  @default(false)
+  school_id      String?   @db.VarChar(255)
+}
+
+model school_sport_item {
+  id                  String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id              Int       @id @default(autoincrement())
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  default_item_id     String?   @db.VarChar(255)
+  sport_group_id      String?   @db.VarChar(255)
+  preliminary_round   Boolean?  @default(false)
+  scene_people_number Int?
+}
+
+model schools {
+  id                       String    @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at               DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at              DateTime? @db.Timestamptz(6)
+  deleted_at               DateTime? @db.Timestamptz(6)
+  name                     String?   @db.VarChar(255)
+  english_name             String?   @db.VarChar(255)
+  slug                     String?   @db.VarChar(255)
+  created_by               String?   @db.VarChar(255)
+  seq_id                   Int       @id @default(autoincrement())
+  collection_id            String?   @db.VarChar(255)
+  has_intelligence_module  Boolean?  @default(false)
+  has_assessment_module    Boolean?  @default(false)
+  has_health_module        Boolean?  @default(false)
+  has_notification_module  Boolean?  @default(false)
+  has_student_module       Boolean?  @default(false)
+  has_attendance_module    Boolean?  @default(false)
+  has_homework_module      Boolean?  @default(false)
+  has_coach_module         Boolean?  @default(false)
+  token                    String?   @db.VarChar(255)
+  has_transcript_module    Boolean?  @default(false)
+  has_library_module       Boolean?  @default(false)
+  has_activity_module      Boolean?  @default(false)
+  has_questionnaire_module Boolean?  @default(false)
+}
+
+model schools_dashboards {
+  id          String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id      Int       @id @default(autoincrement())
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at DateTime? @db.Timestamptz(6)
+  deleted_at  DateTime? @db.Timestamptz(6)
+  name        String?   @db.VarChar(255)
+  school_id   String?   @db.VarChar(255)
+  is_default  Boolean?  @default(false)
+}
+
+model schooluser_homework {
+  id            String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id        Int       @id @default(autoincrement())
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at   DateTime? @db.Timestamptz(6)
+  deleted_at    DateTime? @db.Timestamptz(6)
+  homework_id   String?   @db.VarChar(255)
+  remark        String?
+  submit_at     DateTime? @db.Timestamptz(6)
+  schooluser_id String?   @db.VarChar(255)
+  files         Json?     @db.Json
+}
+
+model schooluser_photos {
+  id            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at   DateTime? @db.Timestamptz(6)
+  deleted_at    DateTime? @db.Timestamptz(6)
+  schooluser_id String?   @db.VarChar(255)
+  key           String?   @db.VarChar(255)
+  url           String?   @db.VarChar(255)
+  face_id       String?   @db.VarChar(255)
+  image_id      String?   @db.VarChar(255)
+  face_records  Json?     @db.Json
+  school_id     String?   @db.VarChar(255)
+}
+
+model schooluser_sport {
+  id             String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id         Int       @id @default(autoincrement())
+  created_at     DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at    DateTime? @db.Timestamptz(6)
+  deleted_at     DateTime? @db.Timestamptz(6)
+  schooluser_id  String?   @db.VarChar(255)
+  item_id        String?   @db.VarChar(255)
+  path           Int?
+  scene          Int?
+  finals_path    Int?
+  score          Int?
+  finals_score   Int?
+  schooluser_ids String[]
+  is_promotion   Boolean?  @default(false)
+  is_new_record  Boolean?  @default(false)
+  ranking        Int?
+  abstain        Boolean?  @default(false)
+  remark         String?   @db.VarChar(255)
+  school_id      String?   @db.VarChar(255)
+  sport_group_id String?   @db.VarChar(255)
+}
+
+model schooluser_sport_personnel {
+  id                  String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id              Int       @id @default(autoincrement())
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  schooluser_id       String?   @db.VarChar(255)
+  schooluser_join_num String?   @db.VarChar(255)
+  sport_id            String?   @db.VarChar(255)
+  school_id           String?   @db.VarChar(255)
+  school_dashboard_id String?   @db.VarChar(255)
+}
+
+model schoolusers {
+  id                    String    @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at            DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at           DateTime? @db.Timestamptz(6)
+  deleted_at            DateTime? @db.Timestamptz(6)
+  name                  String?   @db.VarChar(255)
+  email                 String?   @db.VarChar(255)
+  profile_photo         String?   @db.VarChar(255)
+  user_id               String?   @db.VarChar(255)
+  username              String?   @db.VarChar(255)
+  is_student            Boolean?  @default(false)
+  is_teacher            Boolean?  @default(false)
+  is_director           Boolean?  @default(false)
+  is_admin              Boolean?  @default(false)
+  english_name          String?   @db.VarChar(255)
+  gender                String?   @db.VarChar(255)
+  student_no            String?   @db.VarChar(255)
+  id_no                 String?   @db.VarChar(255)
+  edu_no                String?   @db.VarChar(255)
+  card_no               String?   @db.VarChar(255)
+  school_id             String?   @db.VarChar(255)
+  groups                String[]  @db.VarChar(255)
+  seq_id                Int       @id @default(autoincrement())
+  archived_at           DateTime? @db.Timestamptz(6)
+  is_paramedic          Boolean?  @default(false)
+  is_guardian           Boolean?  @default(false)
+  children_ids          String[]
+  archived_reason       String?   @db.VarChar(255)
+  is_notification_admin Boolean?
+  is_attendance_admin   Boolean?  @default(false)
+}
+
+model schoolusers_classes {
+  id                  String    @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  schooluser_id       String?   @db.VarChar(255)
+  cls_id              String?   @db.VarChar(255)
+  num                 Int?
+  is_student          Boolean?  @default(false)
+  is_cls_teacher      Boolean?  @default(false)
+  is_teacher          Boolean?  @default(false)
+  seq_id              Int       @id @default(autoincrement())
+  archived_at         DateTime? @db.Timestamptz(6)
+  school_dashboard_id String?   @db.VarChar(255)
+  school_id           String?   @db.VarChar(255)
+}
+
+model schoolusers_courses {
+  id                  String    @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  schooluser_id       String?   @db.VarChar(255)
+  course_id           String?   @db.VarChar(255)
+  is_student          Boolean?  @default(false)
+  is_course_teacher   Boolean?  @default(false)
+  is_teacher          Boolean?  @default(false)
+  archived_at         DateTime? @db.Timestamptz(6)
+  school_dashboard_id String?   @db.VarChar(255)
+  school_id           String?   @db.VarChar(255)
+  seq_id              Int       @id @default(autoincrement())
+}
+
+model special_health_conditions {
+  id                  String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  creator_id          String?   @db.VarChar(255)
+  schooluser_id       String?   @db.VarChar(255)
+  etiology_id         String?   @db.VarChar(255)
+  etiology_detail     String?
+  school_id           String?   @db.VarChar(255)
+  seq_id              Int       @id @default(autoincrement())
+  hospital            String?   @db.VarChar(255)
+  emergency_phones    String[]
+  diseases            String[]
+  reason              String?   @db.VarChar(255)
+  school_dashboard_id String?   @db.VarChar(255)
+  edit_logs           Json?     @db.Json
+  special_case        String?
+  special_attention   Boolean?  @default(false)
+}
+
+model students {
+  id                   String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id               Int       @id @default(autoincrement())
+  created_at           DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at          DateTime? @db.Timestamptz(6)
+  deleted_at           DateTime? @db.Timestamptz(6)
+  name                 String?   @db.VarChar(255)
+  english_name         String?   @db.VarChar(255)
+  gender               String?   @db.VarChar(255)
+  nationality          String?   @db.VarChar(255)
+  enrollment_at        DateTime? @db.Timestamptz(6)
+  birth_at             DateTime? @db.Timestamptz(6)
+  birthplace           String?   @db.VarChar(255)
+  phone_number         String?   @db.VarChar(255)
+  address              String?   @db.VarChar(255)
+  father_name          String?   @db.VarChar(255)
+  father_occupation    String?   @db.VarChar(255)
+  father_phone         String?   @db.VarChar(255)
+  mother_name          String?   @db.VarChar(255)
+  mother_occupation    String?   @db.VarChar(255)
+  mother_phone         String?   @db.VarChar(255)
+  guardianship         String?   @db.VarChar(255)
+  guardian_name        String?   @db.VarChar(255)
+  guardian_occupation  String?   @db.VarChar(255)
+  guardian_phone       String?   @db.VarChar(255)
+  id_no                String?   @db.VarChar(255)
+  id_type              String?   @db.VarChar(255)
+  id_issue_location    String?   @db.VarChar(255)
+  edu_no               String?   @db.VarChar(255)
+  homecoming_permit_id String?   @db.VarChar(255)
+  schooluser_id        String?   @db.VarChar(255)
+  school_id            String?   @db.VarChar(255)
+  goldcard_no          String?   @db.VarChar(255)
+  schsub_code          String?   @db.VarChar(255)
+  portuguese_name      String?   @db.VarChar(255)
+  grand                String?   @db.VarChar(255)
+  cls_code             String?   @db.VarChar(255)
+  cls_no               String?   @db.VarChar(255)
+  parents_marital      String?   @db.VarChar(255)
+}
+
+model sub_attendance_rules {
+  id              String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id          Int       @id @default(autoincrement())
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at     DateTime? @db.Timestamptz(6)
+  deleted_at      DateTime? @db.Timestamptz(6)
+  school_id       String?   @db.VarChar(255)
+  start_time      DateTime? @db.Time(6)
+  end_time        DateTime? @db.Time(6)
+  type            String?   @db.VarChar(255)
+  lates           Int?
+  absenteeisms    Int?
+  rule_id         String?   @db.VarChar(255)
+  remarks         String?
+  is_exempt       Boolean?
+  is_after_school Boolean?
+  section         Int?
+  session         Int?
+  late_start      DateTime? @db.Time(6)
+  late_end        DateTime? @db.Time(6)
+  is_to_school    Boolean?
+}
+
+model talents {
+  id              String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at     DateTime? @db.Timestamptz(6)
+  deleted_at      DateTime? @db.Timestamptz(6)
+  seq_id          Int       @id @default(autoincrement())
+  name            String?   @db.VarChar(255)
+  intelligence_id String?   @db.VarChar(255)
+  school_id       String?   @db.VarChar(255)
+}
+
+model term_transcript_settings {
+  id                           String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id                       Int       @id @default(autoincrement())
+  created_at                   DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at                  DateTime? @db.Timestamptz(6)
+  deleted_at                   DateTime? @db.Timestamptz(6)
+  school_id                    String?   @db.VarChar(255)
+  school_dashboard_id          String?   @db.VarChar(255)
+  term                         Int?
+  term_start_at                DateTime? @db.Timestamptz(6)
+  term_end_at                  DateTime? @db.Timestamptz(6)
+  submission_start_at          DateTime? @db.Timestamptz(6)
+  submission_end_at            DateTime? @db.Timestamptz(6)
+  date_of_issue                DateTime? @db.Timestamptz(6)
+  annual_transcript_setting_id String?   @db.VarChar(255)
+  name                         String?   @db.VarChar(255)
+  usual_ratio                  Float?    @db.Real
+  exam_ratio                   Float?    @db.Real
+  total_ratio                  Float?    @db.Real
+  completed_files              String[]
+}
+
+model users_notifications {
+  id              String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id          Int       @id @default(autoincrement())
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at     DateTime? @db.Timestamptz(6)
+  deleted_at      DateTime? @db.Timestamptz(6)
+  notification_id String?   @db.VarChar(255)
+  schooluser_id   String?   @db.VarChar(255)
+  reply           String?   @db.VarChar(255)
+  is_read         Boolean?  @default(false)
+}
+
+model volunteer {
+  id                  String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id              Int       @id @default(autoincrement())
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at         DateTime? @db.Timestamptz(6)
+  deleted_at          DateTime? @db.Timestamptz(6)
+  schooluser_id       String?   @db.VarChar(255)
+  activity_name       String?   @db.VarChar(255)
+  service_start_at    DateTime? @db.Timestamptz(6)
+  service_end_at      DateTime? @db.Timestamptz(6)
+  group_category      String?   @db.VarChar(255)
+  service_sort        String[]
+  institution_name    String?   @db.VarChar(255)
+  teacher_id          String?   @db.VarChar(255)
+  state               Boolean?  @default(false)
+  school_dashboard_id String?   @db.VarChar(255)
+  school_id           String?   @db.VarChar(255)
+  hours               Float?    @db.Real
+}
+
+model volunteer_stage {
+  id             String?   @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  seq_id         Int       @id @default(autoincrement())
+  created_at     DateTime  @default(now()) @db.Timestamptz(6)
+  modified_at    DateTime? @db.Timestamptz(6)
+  deleted_at     DateTime? @db.Timestamptz(6)
+  stage_name     String?   @db.VarChar(255)
+  stage_start_at String?   @db.VarChar(255)
+  stage_end_at   String?   @db.VarChar(255)
+  school_id      String?   @db.VarChar(255)
+}
